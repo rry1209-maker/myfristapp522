@@ -120,7 +120,7 @@
 
     /* ── Avatar ring ── */
     .avatar-wrap {
-      width: 120px; height: 120px;
+      width: 160px; height: 160px;
       margin: 0 auto 32px;
       position: relative;
       animation: avatarIn .8s .3s cubic-bezier(.16,1,.3,1) both;
@@ -133,7 +133,6 @@
       width: 100%; height: 100%;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--coral), var(--lavender), var(--gold), var(--sky));
-      animation: spin 6s linear infinite;
       padding: 3px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -143,6 +142,14 @@
       background: #1a1226;
       display: flex; align-items: center; justify-content: center;
       font-size: 44px;
+      overflow: hidden;
+    }
+    .avatar-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      filter: contrast(1.15) saturate(1.3) brightness(1.05);
+      image-rendering: crisp-edges;
     }
 
     /* ── Name ── */
@@ -287,6 +294,29 @@
     @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
     @keyframes fadeInUp { from{opacity:0;transform:translateX(-50%) translateY(10px);} to{opacity:.5;transform:translateX(-50%) translateY(0);} }
 
+    /* ── Cherry blossoms ── */
+    .sakura-field {
+      position: fixed; inset: 0; z-index: 2;
+      pointer-events: none; overflow: hidden;
+    }
+    .petal {
+      position: absolute;
+      top: -40px;
+      width: var(--size);
+      height: var(--size);
+      opacity: 0;
+      animation: petalFall linear infinite;
+      animation-duration: var(--dur);
+      animation-delay: var(--delay);
+    }
+    .petal svg { width: 100%; height: 100%; }
+    @keyframes petalFall {
+      0%   { transform: translateY(0) rotate(0deg) translateX(0);   opacity: 0; }
+      5%   { opacity: var(--op); }
+      95%  { opacity: var(--op); }
+      100% { transform: translateY(110vh) rotate(var(--spin)) translateX(var(--drift)); opacity: 0; }
+    }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
       .card { padding: 48px 28px; }
@@ -300,12 +330,13 @@
 
 <canvas id="bg-canvas"></canvas>
 <div class="particle-field" id="particleField"></div>
+<div class="sakura-field" id="sakuraField"></div>
 
 <main class="page">
   <div class="card">
     <div class="avatar-wrap">
       <div class="avatar-ring">
-        <div class="avatar-inner">🌸</div>
+        <div class="avatar-inner"><img src="data:image/png;base64,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" alt="보니타샘"/></div>
       </div>
     </div>
 
@@ -445,6 +476,76 @@ function spawnParticle(){
 
 for(let i=0;i<30;i++) spawnParticle();
 setInterval(spawnParticle, 600);
+
+/* ── Cherry blossom petals ── */
+const sakuraField = document.getElementById('sakuraField');
+
+// SVG petal shapes (5-petal flower & single petal)
+const petalShapes = [
+  // 5-petal flower
+  `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.9">
+      <ellipse cx="20" cy="10" rx="5" ry="9" fill="var(--pc)" transform="rotate(0,20,20)"/>
+      <ellipse cx="20" cy="10" rx="5" ry="9" fill="var(--pc)" transform="rotate(72,20,20)"/>
+      <ellipse cx="20" cy="10" rx="5" ry="9" fill="var(--pc)" transform="rotate(144,20,20)"/>
+      <ellipse cx="20" cy="10" rx="5" ry="9" fill="var(--pc)" transform="rotate(216,20,20)"/>
+      <ellipse cx="20" cy="10" rx="5" ry="9" fill="var(--pc)" transform="rotate(288,20,20)"/>
+      <circle cx="20" cy="20" r="4" fill="var(--pc2)"/>
+    </g>
+  </svg>`,
+  // single leaf petal
+  `<svg viewBox="0 0 30 40" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="15" cy="22" rx="10" ry="16" fill="var(--pc)" opacity="0.85" transform="rotate(-10,15,22)"/>
+  </svg>`,
+  // heart petal
+  `<svg viewBox="0 0 32 30" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 26 C6 18 2 12 2 8 A6 6 0 0 1 16 6 A6 6 0 0 1 30 8 C30 12 26 18 16 26Z" fill="var(--pc)" opacity="0.8"/>
+  </svg>`
+];
+
+const petalColors = [
+  {pc:'#FFB7C5', pc2:'#FF8FA3'},
+  {pc:'#FFC8D6', pc2:'#FF6B9D'},
+  {pc:'#FFD6E0', pc2:'#FFB5A7'},
+  {pc:'#F9A8D4', pc2:'#EC4899'},
+  {pc:'#FBCFE8', pc2:'#FF6B9D'},
+];
+
+function spawnPetal() {
+  const el = document.createElement('div');
+  el.className = 'petal';
+
+  const col   = petalColors[Math.floor(Math.random() * petalColors.length)];
+  const shape = petalShapes[Math.floor(Math.random() * petalShapes.length)];
+  const size  = 14 + Math.random() * 22;
+  const dur   = 6 + Math.random() * 10;
+  const delay = Math.random() * 10;
+  const op    = 0.5 + Math.random() * 0.45;
+  const spin  = (Math.random() - 0.5) * 720;
+  const drift = (Math.random() - 0.5) * 200;
+
+  el.innerHTML = shape
+    .replace(/var\(--pc\)/g, col.pc)
+    .replace(/var\(--pc2\)/g, col.pc2);
+
+  el.style.cssText = `
+    left: ${Math.random() * 105}%;
+    --size: ${size}px;
+    --dur: ${dur}s;
+    --delay: ${delay}s;
+    --op: ${op};
+    --spin: ${spin}deg;
+    --drift: ${drift}px;
+    filter: drop-shadow(0 2px 4px rgba(255,107,157,.25));
+  `;
+
+  sakuraField.appendChild(el);
+  setTimeout(() => el.remove(), (dur + delay) * 1000 + 500);
+}
+
+// Initial burst
+for (let i = 0; i < 40; i++) spawnPetal();
+setInterval(spawnPetal, 300);
 
 /* ── Music toggle ── */
 const audio = document.getElementById('bgAudio');
